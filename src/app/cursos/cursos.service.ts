@@ -1,6 +1,7 @@
+import { environment } from './../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap } from 'rxjs';
+import { delay, tap } from 'rxjs';
 import { Curso } from './curso';
 
 @Injectable({
@@ -8,13 +9,14 @@ import { Curso } from './curso';
 })
 export class CursosService {
 
-  private readonly API = 'http://localhost:3000/cursos'
+  private readonly API = `${environment.API}cursos`
 
   constructor(private httpClient: HttpClient) { }
 
   listaCursos() {
     return this.httpClient.get<Curso[]>(this.API)
     .pipe(
+      delay(2000),
       tap(console.log)
     )
   }
