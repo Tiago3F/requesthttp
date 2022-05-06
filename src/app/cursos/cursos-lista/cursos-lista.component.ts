@@ -1,3 +1,4 @@
+import { AlertModalService } from './../../shared/alert-modal.service';
 import { AlertModalComponent } from './../../shared/alert-modal/alert-modal.component';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { CursosService } from './../cursos.service';
@@ -19,7 +20,10 @@ export class CursosListaComponent implements OnInit {
   bsModalRef?: BsModalRef;
 
 
-  constructor(private cursosService: CursosService, private modalService: BsModalService) { }
+  constructor(private cursosService: CursosService,
+    // private modalService: BsModalService
+    private alertService: AlertModalService
+  ) { }
 
   ngOnInit(): void {
     // this.cursosService.listaCursos().subscribe(dados => this.cursos = dados)
@@ -29,35 +33,36 @@ export class CursosListaComponent implements OnInit {
 
   onRefresh() {
     this.cursos$ = this.cursosService.listaCursos()
-    .pipe(
-      // map(),
-      // tap(),
-      // switchMap(),
-      catchError(error => {
-        console.error(error)
-        // this.error$.next(true)
-        this.handleError()
-        return empty()
-      })
-    )
+      .pipe(
+        // map(),
+        // tap(),
+        // switchMap(),
+        catchError(error => {
+          console.error(error)
+          // this.error$.next(true)
+          this.handleError()
+          return empty()
+        })
+      )
 
     this.cursosService.listaCursos()
-    .pipe(
-      catchError(error => empty())
-    )
-    .subscribe(
-      dados => {
-        console.log(dados)
-      },
-      // error => console.error(error),
-      // () => console.log('Observable completo!')
-    )
+      .pipe(
+        catchError(error => empty())
+      )
+      .subscribe(
+        dados => {
+          console.log(dados)
+        },
+        // error => console.error(error),
+        // () => console.log('Observable completo!')
+      )
   }
 
   handleError() {
-    this.bsModalRef = this.modalService.show(AlertModalComponent);
-    this.bsModalRef.content.type = 'danger';
-    this.bsModalRef.content.message = 'Erro ao carregar cursos. Tente novamente mais tarde...';
+    this.alertService.showAlertDanger('Erro ao carregar cursos. Tente novamente mais tarde...')
+    // this.bsModalRef = this.modalService.show(AlertModalComponent);
+    // this.bsModalRef.content.type = 'danger';
+    // this.bsModalRef.content.message = 'Erro ao carregar cursos. Tente novamente mais tarde...';
   }
 
 }
